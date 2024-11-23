@@ -17,7 +17,6 @@
 // ELF file parser
 
 #pragma once
-#define FOLLY_EXPERIMENTAL_SYMBOLIZER_ELF_H_
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -55,6 +54,7 @@ using ElfShdr = FOLLY_ELF_ELFW(Shdr);
 using ElfSym = FOLLY_ELF_ELFW(Sym);
 using ElfRel = FOLLY_ELF_ELFW(Rel);
 using ElfRela = FOLLY_ELF_ELFW(Rela);
+using ElfDyn = FOLLY_ELF_ELFW(Dyn);
 
 // ElfFileId is supposed to uniquely identify any instance of an ELF binary.
 // It does that by using the file's inode, dev ID, size and modification time

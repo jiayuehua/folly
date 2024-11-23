@@ -406,6 +406,9 @@ set(ARM_AOR_ASM_FILES
   ${FOLLY_DIR}/external/aor/memcpy-armv8.S
   ${FOLLY_DIR}/external/aor/memcpy_sve.S
   ${FOLLY_DIR}/external/aor/memset-advsimd.S
+  ${FOLLY_DIR}/external/aor/memcpy-mops.S
+  ${FOLLY_DIR}/external/aor/memmove-mops.S
+  ${FOLLY_DIR}/external/aor/memset-mops.S
 )
 if (IS_AARCH64_ARCH)
   foreach (AOR_FILE IN LISTS ARM_AOR_ASM_FILES)
@@ -477,6 +480,9 @@ target_link_libraries(folly PUBLIC folly_deps)
 add_library(folly_test_util
   ${FOLLY_DIR}/test/DeterministicSchedule.cpp
   ${FOLLY_DIR}/json/JsonTestUtil.cpp
+)
+target_compile_definitions(folly_test_util PUBLIC
+  FOLLY_CERTS_DIR="${FOLLY_DIR}/io/async/test/certs"
 )
 set_property(TARGET folly_test_util PROPERTY VERSION ${PACKAGE_VERSION})
 target_link_libraries(folly_test_util
@@ -683,7 +689,7 @@ if (BUILD_TESTS OR BUILD_BENCHMARKS)
       TEST container_evicting_cache_map_test SOURCES EvictingCacheMapTest.cpp
       TEST container_f14_fwd_test SOURCES F14FwdTest.cpp
       TEST container_f14_map_test SOURCES F14MapTest.cpp
-      TEST container_f14_set_test WINDOWS_DISABLED SOURCES F14SetTest.cpp
+      TEST container_f14_set_test SOURCES F14SetTest.cpp
       BENCHMARK container_fbvector_benchmark
         SOURCES FBVectorBenchmark.cpp
         HEADERS FBVectorBenchmarks.cpp.h
@@ -698,7 +704,7 @@ if (BUILD_TESTS OR BUILD_BENCHMARKS)
         SOURCES small_vector_test.cpp
       TEST container_sorted_vector_types_test SOURCES sorted_vector_test.cpp
       TEST container_span_test SOURCES span_test.cpp
-      BENCHMARK container_sparse_byte_set_benchmark WINDOWS_DISABLED
+      BENCHMARK container_sparse_byte_set_benchmark
         SOURCES SparseByteSetBenchmark.cpp
       TEST container_sparse_byte_set_test SOURCES SparseByteSetTest.cpp
       TEST container_util_test SOURCES UtilTest.cpp
@@ -728,16 +734,13 @@ if (BUILD_TESTS OR BUILD_BENCHMARKS)
       TEST concurrency_unbounded_queue_test SOURCES UnboundedQueueTest.cpp
 
     DIRECTORY detail/test/
-      TEST detail_static_singleton_manager_test
-        SOURCES StaticSingletonManagerTest.cpp
-
-    DIRECTORY detail/test/
       TEST detail_simple_simd_string_utils_test
         SOURCES SimpleSimdStringUtilsTest.cpp
-
-    DIRECTORY detail/test/
       TEST detail_split_string_simd_test WINDOWS_DISABLED
         SOURCES SplitStringSimdTest.cpp
+      TEST detail_static_singleton_manager_test
+        SOURCES StaticSingletonManagerTest.cpp
+      TEST detail_type_list_test SOURCES TypeListTest.cpp
 
     DIRECTORY detail/base64_detail/tests/
       TEST detail_base64_detail_test WINDOWS_DISABLED
@@ -1065,8 +1068,7 @@ if (BUILD_TESTS OR BUILD_BENCHMARKS)
       TEST atomic_unordered_map_test SOURCES AtomicUnorderedMapTest.cpp
       TEST base64_test SOURCES base64_test.cpp
       TEST buffered_atomic_test SOURCES BufferedAtomicTest.cpp
-      TEST cancellation_token_test WINDOWS_DISABLED
-        SOURCES CancellationTokenTest.cpp
+      TEST cancellation_token_test SOURCES CancellationTokenTest.cpp
       TEST chrono_test SOURCES ChronoTest.cpp
       TEST clock_gettime_wrappers_test SOURCES ClockGettimeWrappersTest.cpp
       TEST concurrent_bit_set_test SOURCES ConcurrentBitSetTest.cpp
@@ -1076,8 +1078,7 @@ if (BUILD_TESTS OR BUILD_BENCHMARKS)
       # Builds but fails test on constexpr_exp_floating std::exp(471.L)
       TEST constexpr_math_test WINDOWS_DISABLED
         SOURCES ConstexprMathTest.cpp
-      TEST conv_test WINDOWS_DISABLED
-        SOURCES ConvTest.cpp
+      TEST conv_test SOURCES ConvTest.cpp
       TEST cpu_id_test SOURCES CpuIdTest.cpp
       TEST demangle_test SOURCES DemangleTest.cpp
       TEST deterministic_schedule_test SOURCES DeterministicScheduleTest.cpp
@@ -1176,15 +1177,12 @@ if (BUILD_TESTS OR BUILD_BENCHMARKS)
       TEST token_bucket_test SOURCES TokenBucketTest.cpp
       TEST traits_test SOURCES TraitsTest.cpp
       TEST try_test WINDOWS_DISABLED SOURCES TryTest.cpp
-      TEST type_list_test WINDOWS_DISABLED SOURCES TypeListTest.cpp
       TEST unicode_test SOURCES UnicodeTest.cpp
       TEST unit_test SOURCES UnitTest.cpp
       BENCHMARK uri_benchmark SOURCES UriBenchmark.cpp
       TEST uri_test SOURCES UriTest.cpp
       TEST utf8_string_test SOURCES UTF8StringTest.cpp
-      # Needs C++20 on MSVC
-      TEST utility_test WINDOWS_DISABLED
-        SOURCES UtilityTest.cpp
+      TEST utility_test SOURCES UtilityTest.cpp
       TEST varint_test SOURCES VarintTest.cpp
 
     DIRECTORY testing/test/

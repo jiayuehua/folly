@@ -24,17 +24,17 @@
 #include <folly/ExceptionWrapper.h>
 #include <folly/Traits.h>
 #include <folly/Try.h>
-#include <folly/experimental/coro/AutoCleanup-fwd.h>
-#include <folly/experimental/coro/Coroutine.h>
-#include <folly/experimental/coro/CurrentExecutor.h>
-#include <folly/experimental/coro/Invoke.h>
-#include <folly/experimental/coro/Result.h>
-#include <folly/experimental/coro/ScopeExit.h>
-#include <folly/experimental/coro/ViaIfAsync.h>
-#include <folly/experimental/coro/WithAsyncStack.h>
-#include <folly/experimental/coro/WithCancellation.h>
-#include <folly/experimental/coro/detail/Malloc.h>
-#include <folly/experimental/coro/detail/ManualLifetime.h>
+#include <folly/coro/AutoCleanup-fwd.h>
+#include <folly/coro/Coroutine.h>
+#include <folly/coro/CurrentExecutor.h>
+#include <folly/coro/Invoke.h>
+#include <folly/coro/Result.h>
+#include <folly/coro/ScopeExit.h>
+#include <folly/coro/ViaIfAsync.h>
+#include <folly/coro/WithAsyncStack.h>
+#include <folly/coro/WithCancellation.h>
+#include <folly/coro/detail/Malloc.h>
+#include <folly/coro/detail/ManualLifetime.h>
 #include <folly/tracing/AsyncStack.h>
 
 #include <glog/logging.h>
@@ -504,9 +504,11 @@ class FOLLY_NODISCARD AsyncGenerator {
   friend AsyncGenerator tag_invoke(
       tag_t<co_invoke_fn>, tag_t<AsyncGenerator, F, A...>, F_ f, A_... a) {
     if constexpr (RequiresCleanup) {
-      auto&& [r] = co_await co_scope_exit(
-          [](auto&& gen) { return std::move(gen).cleanup(); },
-          invoke(static_cast<F&&>(f), static_cast<A&&>(a)...));
+      auto&& [fScoped, r] = co_await co_scope_exit(
+          [](auto&&, auto&& gen) { return std::move(gen).cleanup(); },
+          static_cast<F&&>(f),
+          AsyncGenerator{});
+      r = invoke(static_cast<F&&>(fScoped), static_cast<A&&>(a)...);
       while (true) {
         co_yield co_result(co_await co_awaitTry(r.next()));
       }

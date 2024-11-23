@@ -3,24 +3,6 @@ load("@fbcode_macros//build_defs:cpp_library.bzl", "cpp_library")
 oncall("fbcode_entropy_wardens_folly")
 
 cpp_library(
-    name = "bits",
-    headers = ["Bits.h"],
-    exported_deps = [
-        "//folly/lang:bits_class",
-    ],
-)
-
-cpp_library(
-    name = "coding_detail",
-    headers = [
-        "CodingDetail.h",
-    ],
-    exported_deps = [
-        "//folly/compression/elias_fano:coding_detail",
-    ],
-)
-
-cpp_library(
     name = "elias_fano_coding",
     headers = [
         "EliasFanoCoding.h",
@@ -37,16 +19,6 @@ cpp_library(
     ],
     exported_deps = [
         "//folly/synchronization:event_count",
-    ],
-)
-
-cpp_library(
-    name = "execution_observer",
-    headers = [
-        "ExecutionObserver.h",
-    ],
-    exported_deps = [
-        "//folly/executors:execution_observer",
     ],
 )
 
@@ -81,56 +53,6 @@ cpp_library(
 )
 
 cpp_library(
-    name = "lock_free_ring_buffer",
-    headers = [
-        "LockFreeRingBuffer.h",
-    ],
-    exported_deps = [
-        "//folly/concurrency/container:lock_free_ring_buffer",
-    ],
-)
-
-cpp_library(
-    name = "primary_ptr",
-    headers = [
-        "PrimaryPtr.h",
-    ],
-    exported_deps = [
-        "//folly/concurrency/memory:primary_ptr",
-    ],
-)
-
-cpp_library(
-    name = "read_mostly_shared_ptr",
-    headers = [
-        "ReadMostlySharedPtr.h",
-    ],
-    exported_deps = [
-        "//folly/concurrency/memory:read_mostly_shared_ptr",
-    ],
-)
-
-cpp_library(
-    name = "single_writer_fixed_hash_map",
-    headers = [
-        "SingleWriterFixedHashMap.h",
-    ],
-    exported_deps = [
-        "//folly/concurrency/container:single_writer_fixed_hash_map",
-    ],
-)
-
-cpp_library(
-    name = "singleton_relaxed_counter",
-    headers = [
-        "SingletonRelaxedCounter.h",
-    ],
-    exported_deps = [
-        "//folly/concurrency:singleton_relaxed_counter",
-    ],
-)
-
-cpp_library(
     name = "test_util",
     headers = [
         "TestUtil.h",
@@ -147,15 +69,5 @@ cpp_library(
     ],
     exported_deps = [
         "//folly/executors:threaded_repeating_function_runner",
-    ],
-)
-
-cpp_library(
-    name = "tl_ref_count",
-    headers = [
-        "TLRefCount.h",
-    ],
-    exported_deps = [
-        "//folly/concurrency/memory:tl_ref_count",
     ],
 )

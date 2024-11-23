@@ -8,6 +8,7 @@
 import configparser
 import io
 import os
+import sys
 from typing import List
 
 from .builder import (
@@ -21,6 +22,7 @@ from .builder import (
     NopBuilder,
     OpenSSLBuilder,
     SqliteBuilder,
+    SystemdBuilder,
 )
 from .cargo import CargoBuilder
 from .expr import parse_expr
@@ -391,7 +393,10 @@ class ManifestParser(object):
             return False
         for key in envs:
             val = os.environ.get(key, None)
-            print(f"Testing ENV[{key}]: {repr(val)}")
+            print(
+                f"Testing ENV[{key}]: {repr(val)}",
+                file=sys.stderr,
+            )
             if val is None:
                 return False
             if len(val) == 0:
@@ -647,6 +652,18 @@ class ManifestParser(object):
 
         if builder == "iproute2":
             return Iproute2Builder(
+                loader,
+                dep_manifests,
+                build_options,
+                ctx,
+                self,
+                src_dir,
+                build_dir,
+                inst_dir,
+            )
+
+        if builder == "systemd":
+            return SystemdBuilder(
                 loader,
                 dep_manifests,
                 build_options,
